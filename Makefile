@@ -6,15 +6,16 @@ local/ssh/%:
 
 local/apply/%:
 	$(eval ip=${${@F}})
-	ssh isucon@${ip}
+	rsync -v -e ssh Makefile isucon@${ip}:~/
+	rsync -rv --delete -e ssh go/ isucon@${ip}:~/webapp/go/
 
 local/pull/%:
 	$(eval ip=${${@F}})
 	scp -r isucon@${ip}:~/etc/ etc/
 
-local/apply/%:
-	$(eval ip=${${*D}})
-	ssh isucon@${ip} make remote/git/${*F}
+local/setup/%:
+	$(eval ip=${${@F}})
+	ssh isucon@${ip} bash --login -c "make remote/setup"
 
 remote/git/%:
 	git fetch -p
@@ -22,7 +23,8 @@ remote/git/%:
 	git pull
 
 remote/setup:
-	cd webapp/go/
+	cd webapp/go/ && \
+	go mod tidy && \
 	go build -o isuconquest ./...
 	sudo rsync etc/nginx/ /etc/nginx/
 	sudo rsync etc/mysql/ /etc/mysql/
