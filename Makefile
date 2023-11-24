@@ -1,6 +1,4 @@
-app1 := 57.180.53.238
-app2 := 52.195.194.128
-app3 := 13.230.232.66
+include makefile.env
 
 local/ssh/%:
 	$(eval ip=${${@F}})
@@ -13,6 +11,10 @@ local/apply/%:
 local/pull/%:
 	$(eval ip=${${@F}})
 	scp -r isucon@${ip}:~/etc/ etc/
+
+local/apply/%:
+	$(eval ip=${${*D}})
+	ssh isucon@${ip} make remote/git/${*F}
 
 remote/git/%:
 	git fetch -p
