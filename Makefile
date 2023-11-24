@@ -20,7 +20,19 @@ remote/git/%:
 	git pull
 
 remote/setup:
+	cd webapp/go/
+	go build -o isuconquest ./...
 	sudo rsync etc/nginx/ /etc/nginx/
 	sudo rsync etc/mysql/ /etc/mysql/
 	sudo chown -R root:root /etc/nginx
 	sudo chown -R root:root /etc/mysql
+	sudo systemctl daemon-reload
+	sudo systemctl enable mysql nginx isuconquest.go.service
+	sudo systemctl restart mysql nginx isuconquest.go.service
+
+remote/prepare-bench:
+	# log rotate
+	
+remote/report-bench:
+	# log rotate
+	# log post to discord
